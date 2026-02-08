@@ -8,7 +8,7 @@
 #You may not use this script maliciously
 #The author takes no responsibility over any malicious use
 
-#Authored by Birk Jederström
+#Authored by Birk Jederstrom
 
 #Neccesary to use hashes and encryptions
 import hashlib
