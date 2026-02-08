@@ -12,7 +12,9 @@
 
 #Neccesary to use hashes and encryptions
 import hashlib
-#from argon2 import PasswordHasher
+
+#Argon2 imports
+from argon2 import PasswordHasher
 
 #Timer imports
 import time
@@ -55,6 +57,10 @@ RandomlySaltedhashedBenchmarkSHA256 = hashlib.sha256((pword + SHA256RandomSalt).
 RandomlySaltedhashedBenchmarkSHA3_256 = hashlib.sha3_256((pword + SHA3_256RandomSalt).encode()).hexdigest()
 RandomlySaltedhashedBenchmarkSHA3_512 = hashlib.sha3_512((pword + Sha3_512RandomSalt).encode()).hexdigest()
        
+#Argon2 Hash
+ph = PasswordHasher()
+hash_value = ph.hash('9999')
+
 def findMD5Hash(hashedBenchmark):
 
     #Start timer
@@ -427,11 +433,31 @@ def findRandomlySaltedSHA3_512Hash(hashedBenchmark):
 
     return length
 
+def findArgon2Hash(hashedBenchmark):
+    start = time.time()
+
+    x = 0
+    for x in range(10000):
+        attempt = f"{x:04d}"
+        try:
+            ph.verify(hashedBenchmark, attempt)
+            print("Matched ", attempt)
+            end = time.time()
+            length = end - start
+            break
+        except:
+            pass
+
+    return length
+
 RandomlySaltedMD5Time = findRandomlySaltedMD5Hash(RandomlySaltedhashedBenchmarkMD5)
 RandomlySaltedSHA1Time = findRandomlySaltedSHA1Hash(RandomlySaltedhashedBenchmarkSHA1)
 RandomlySaltedSHA256Time = findRandomlySaltedSHA256Hash(RandomlySaltedhashedBenchmarkSHA256)
 RandomlySaltedSHA3_256Time = findRandomlySaltedSHA3_256Hash(RandomlySaltedhashedBenchmarkSHA3_256)
 RandomlySaltedSHA3_512Time = findRandomlySaltedSHA3_512Hash(RandomlySaltedhashedBenchmarkSHA3_512)
+
+#Argon2
+Argon2Time = findArgon2Hash(hash_value)
 
 print("-------- Salted --------")
 print("Results: ")
@@ -440,6 +466,7 @@ print("Sha1 time: ", RandomlySaltedSHA1Time, "ms")
 print("Sha256 time: ", RandomlySaltedSHA256Time, "ms")
 print("Sha3_256 time: ", RandomlySaltedSHA3_256Time, "ms")
 print("Sha3_512 time: ", RandomlySaltedSHA3_512Time, "ms")
+print("Argon2id time: ", Argon2Time, "ms")
 
-print()
-print("Argon2id ignored due to difficulties in the work environment with Python3 and Pip in Windows11")
+#print()
+#print("Argon2id ignored due to difficulties in the work environment with Python3 and Pip in Windows11")

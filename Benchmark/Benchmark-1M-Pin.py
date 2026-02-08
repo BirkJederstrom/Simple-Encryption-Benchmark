@@ -11,6 +11,7 @@
 #Authored by Birk Jederstrom
 
 import hashlib, time, secrets
+from argon2 import PasswordHasher
 
 pword = '9999999'
 
@@ -28,6 +29,10 @@ Salt = secrets.token_hex(16)
 
 #Randomly salted Hash
 RandomlySaltedhashedSHA3_512 = hashlib.sha3_512((pword + Salt).encode()).hexdigest()
+
+#Argon2 Hash
+ph = PasswordHasher()
+hash_value = ph.hash('9999999')
 
 def findMD5Hash(hashedBenchmark):
     start = time.time()
@@ -77,11 +82,30 @@ def findRandomlySaltedSHA3_512Hash(hashedBenchmark):
             break
     return length
 
+def findArgon2Hash(hashedBenchmark):
+    start = time.time()
+
+    x = 0
+    for x in range(10000000):
+        attempt = f"{x:04d}"
+        try:
+            ph.verify(hashedBenchmark, attempt)
+            print("Matched ", attempt)
+            end = time.time()
+            length = end - start
+            break
+        except:
+            pass
+    
+    return length
+
 MD5Time = findMD5Hash(hashedMD5)
 SaltedMD5Time = findSaltedMD5Hash(SaltedHashedMD5)
 RandomlySaltedSHA3_512Time = findRandomlySaltedSHA3_512Hash(RandomlySaltedhashedSHA3_512)
+Argon2Time = findArgon2Hash(hash_value)
 
 print("----- RESULTS -----")
 print("MD5 time: ", MD5Time)
 print("Salted MD5 time: ", SaltedMD5Time)
 print("Randomly Salted SHA3-512 time: ", RandomlySaltedSHA3_512Time)
+print("Argon2id time: ", Argon2Time)
