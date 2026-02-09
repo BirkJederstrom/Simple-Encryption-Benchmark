@@ -435,19 +435,31 @@ def findRandomlySaltedSHA3_512Hash(hashedBenchmark):
 
 def findArgon2Hash(hashedBenchmark):
     start = time.time()
+    
+    print("Working on cracking the Argon2id hash...")
 
     x = 0
     for x in range(10000):
-        attempt = f"{x:04d}"
+        D = f"{x:04d}"
+        currentTimeSpent = time.time()
+        liveClock = currentTimeSpent - start
+
+        print(f'Time spent {liveClock:.2f} seconds | %d' % (x / 100) + '% completed...', end='\r')
+
+        CrackSuccessful = False
         try:
-            ph.verify(hashedBenchmark, attempt)
-            print("Matched ", attempt)
+            ph.verify(hashedBenchmark, D)
+            print("Matched ", D)
             end = time.time()
             length = end - start
+            CrackSuccessful = True
             break
         except:
             pass
-
+    if CrackSuccessful:
+        print("Crack successful!")
+    else:
+        print("Crack unsuccessful Go phishing.")
     return length
 
 RandomlySaltedMD5Time = findRandomlySaltedMD5Hash(RandomlySaltedhashedBenchmarkMD5)
